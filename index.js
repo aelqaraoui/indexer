@@ -23,7 +23,7 @@ app.get("/", (req, res) => res.send("What are you doing here ??"));
 // Our Goodreads relay route!
 app.get("/api/latest_transactions", async (req, res) => {
 		// It uses node-fetch to call the goodreads api, and reads the key from .env
-	const response = await fetch(`https://indexer.havendao.community/api/house.woothugg.near?api_key=bd2c5be14f2f3bf2da4ffdb4&limit=10`);
+	const response = await fetch(`https://indexer.havendao.community/api/house.woothugg.near?api_key=6ad95b1bc0c3c4f2901c73d2&limit=10`);
     
     
 	const results = await response.json();
