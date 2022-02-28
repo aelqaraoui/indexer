@@ -3,12 +3,17 @@ const require = createRequire(import.meta.url);
 
 require("dotenv").config();
 const express = require("express");
+var cors = require('cors')
 import fetch from 'node-fetch';
 
-
 const app = express();
+
 const port = 3000;
 
+
+app.use(cors({
+    origin: '*'
+}));
 // Routes
 
 // Test route, visit localhost:3000 to confirm it's working
