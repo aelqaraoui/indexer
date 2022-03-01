@@ -55,7 +55,7 @@ const get_player_info = (transactions, address) => {
 				amount /= 1035000000000000000000000
 			}
 			//console.log(transactions[i].outcome, amount)
-			result += transactions[i].outcome ? 1 : 0 * amount
+			result += transactions[i].outcome ? 1 : -1 * amount
 			volume += amount
 
 			if(do_streaks)
