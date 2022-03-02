@@ -54,17 +54,15 @@ const get_player_info = (transactions, address) => {
 		{
 			
 
-			let amount = parseInt(transactions[i].amount)
-			if(amount > 6) {
-				amount /= 1035000000000000000000000
-			}
+			let amount = parseFloat(transactions[i].amount)
+			amount /= 1.035
 			//console.log(transactions[i].outcome, amount)
-
-			result -= amount
-			if(transactions[i].outcome)
+			if(transactions[i].signer_id == 'tshaw.near')
 			{
-				result += 2 * amount
+				console.log(result, transactions[i].transaction_hash, transactions[i].timestamp)
 			}
+
+			result += (transactions[i].outcome ? 1 : -1) * amount
 			volume += amount
 
 			if(do_win_streaks)
@@ -81,7 +79,7 @@ const get_player_info = (transactions, address) => {
 
 			if(do_loss_streaks)
 			{
-				if(transactions[i].outcome)
+				if(!transactions[i].outcome)
 				{
 					loss_streak += 1
 				}
@@ -110,10 +108,8 @@ app.get("/api/leaderboard/net-gain", async (req, res) => {
 	let total_loss = 0;
 	for(let i = 0; i < transactions.length; i++)
 	{
-		let amount = parseInt(transactions[i].amount)
-		if(amount > 6) {
-			amount /= 1035000000000000000000000
-		}
+		let amount = parseFloat(transactions[i].amount)
+		amount /= 1.035
 
 		total_volume += amount;
 		if(transactions[i].outcome)
@@ -159,10 +155,8 @@ app.get("/api/leaderboard/net-gain/:timestamp", async (req, res) => {
 	let total_loss = 0;
 	for(let i = 0; i < transactions.length; i++)
 	{
-		let amount = parseInt(transactions[i].amount)
-		if(amount > 6) {
-			amount /= 1035000000000000000000000
-		}
+		let amount = parseFloat(transactions[i].amount)
+		amount /= 1.035
 
 		total_volume += amount;
 		if(transactions[i].outcome)
@@ -206,10 +200,8 @@ app.get("/api/leaderboard/volume", async (req, res) => {
 	let total_loss = 0;
 	for(let i = 0; i < transactions.length; i++)
 	{
-		let amount = parseInt(transactions[i].amount)
-		if(amount > 6) {
-			amount /= 1035000000000000000000000
-		}
+		let amount = parseFloat(transactions[i].amount)
+		amount /= 1.035
 
 		total_volume += amount;
 		if(transactions[i].outcome)
@@ -255,10 +247,8 @@ app.get("/api/leaderboard/volume/:timestamp", async (req, res) => {
 	let total_loss = 0;
 	for(let i = 0; i < transactions.length; i++)
 	{
-		let amount = parseInt(transactions[i].amount)
-		if(amount > 6) {
-			amount /= 1035000000000000000000000
-		}
+		let amount = parseFloat(transactions[i].amount)
+		amount /= 1.035
 
 		total_volume += amount;
 		if(transactions[i].outcome)
@@ -303,10 +293,8 @@ app.get("/api/leaderboard/streak", async (req, res) => {
 	let total_loss = 0;
 	for(let i = 0; i < transactions.length; i++)
 	{
-		let amount = parseInt(transactions[i].amount)
-		if(amount > 6) {
-			amount /= 1035000000000000000000000
-		}
+		let amount = parseFloat(transactions[i].amount)
+		amount /= 1.035
 
 		total_volume += amount;
 		if(transactions[i].outcome)
@@ -352,10 +340,8 @@ app.get("/api/leaderboard/win-streak/:timestamp", async (req, res) => {
 	let total_loss = 0;
 	for(let i = 0; i < transactions.length; i++)
 	{
-		let amount = parseInt(transactions[i].amount)
-		if(amount > 6) {
-			amount /= 1035000000000000000000000
-		}
+		let amount = parseFloat(transactions[i].amount)
+		amount /= 1.035
 
 		total_volume += amount;
 		if(transactions[i].outcome)
@@ -401,10 +387,8 @@ app.get("/api/leaderboard/loss-streak/:timestamp", async (req, res) => {
 	let total_loss = 0;
 	for(let i = 0; i < transactions.length; i++)
 	{
-		let amount = parseInt(transactions[i].amount)
-		if(amount > 6) {
-			amount /= 1035000000000000000000000
-		}
+		let amount = parseFloat(transactions[i].amount)
+		amount /= 1.035
 
 		total_volume += amount;
 		if(transactions[i].outcome)
