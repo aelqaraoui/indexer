@@ -357,7 +357,7 @@ app.get("/api/leaderboard/win-streak/:timestamp", async (req, res) => {
 	let unique_players = [...new Set(transactions.map((value) => value.signer_id))];
 	let player_info = unique_players.map((value) => get_player_info(transactions, value));
 
-	let leaderboard = player_info.map((value) => {return {'signer_id': value.signer_id, 'streak': value.streak}});
+	let leaderboard = player_info.map((value) => {return {'signer_id': value.signer_id, 'streak': value.win_streak}});
 	leaderboard.sort(function(a, b) {
 		return b.streak - a.streak;
 	});
