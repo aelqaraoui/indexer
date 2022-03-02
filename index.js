@@ -77,10 +77,58 @@ const get_player_info = (transactions, address) => {
 app.get("/api/leaderboard/net-gain", async (req, res) => {
 	const response = await fetch(`https://indexer.havendao.community/api/house.woothugg.near?api_key=6ad95b1bc0c3c4f2901c73d2&limit=999999`);
 
+	const results = await response.json();
+
+	let transactions = results.data.filter((value) => value.signer_id != 'house.woothugg.near');
+
+	console.log(transactions)
+
+	let total_volume = 0;
+	let total_won = 0;
+	let total_loss = 0;
+	for(let i = 0; i < transactions.length; i++)
+	{
+		let amount = parseInt(transactions[i].amount)
+		if(amount > 6) {
+			amount /= 1035000000000000000000000
+		}
+
+		total_volume += amount;
+		if(transactions[i].outcome)
+		{
+			total_won += amount;
+		}
+		else
+		{
+			total_loss += amount;
+		}
+	}
+
+	let unique_players = [...new Set(transactions.map((value) => value.signer_id))];
+	let player_info = unique_players.map((value) => get_player_info(transactions, value));
+
+	let leaderboard = player_info.map((value) => {return {'signer_id': value.signer_id, 'net': value.net}});
+	leaderboard.sort(function(a, b) {
+		return b.net - a.net;
+	});
+
+	return res.json({
+		'total_flips': transactions.length,
+		'total_won': total_won,
+		'total_loss': total_loss,
+		'total_volume': total_volume,
+		'leaderboard': leaderboard.slice(0, 20)
+	})
+})
+
+app.get("/api/leaderboard/net-gain/:timestamp", async (req, res) => {
+	const response = await fetch(`https://indexer.havendao.community/api/house.woothugg.near?api_key=6ad95b1bc0c3c4f2901c73d2&limit=999999`);
+
 
 	const results = await response.json();
 
-	const transactions = results.data.filter((value) => value.signer_id != 'house.woothugg.near');
+	let transactions = results.data.filter((value) => value.signer_id != 'house.woothugg.near');
+	transactions =transactions.filter((value) => value.timestamp >= req.params.timestamp);
 
 	console.log(transactions)
 
@@ -125,10 +173,58 @@ app.get("/api/leaderboard/net-gain", async (req, res) => {
 app.get("/api/leaderboard/volume", async (req, res) => {
 	const response = await fetch(`https://indexer.havendao.community/api/house.woothugg.near?api_key=6ad95b1bc0c3c4f2901c73d2&limit=999999`);
 
-
 	const results = await response.json();
 
 	const transactions = results.data.filter((value) => value.signer_id != 'house.woothugg.near');
+
+	console.log(transactions)
+
+	let total_volume = 0;
+	let total_won = 0;
+	let total_loss = 0;
+	for(let i = 0; i < transactions.length; i++)
+	{
+		let amount = parseInt(transactions[i].amount)
+		if(amount > 6) {
+			amount /= 1035000000000000000000000
+		}
+
+		total_volume += amount;
+		if(transactions[i].outcome)
+		{
+			total_won += amount;
+		}
+		else
+		{
+			total_loss += amount;
+		}
+	}
+
+	let unique_players = [...new Set(transactions.map((value) => value.signer_id))];
+	let player_info = unique_players.map((value) => get_player_info(transactions, value));
+
+	let leaderboard = player_info.map((value) => {return {'signer_id': value.signer_id, 'volume': value.volume}});
+	leaderboard.sort(function(a, b) {
+		return b.volume - a.volume;
+	});
+
+	return res.json({
+		'total_flips': transactions.length,
+		'total_won': total_won,
+		'total_loss': total_loss,
+		'total_volume': total_volume,
+		'leaderboard': leaderboard.slice(0, 20)
+	})
+})
+
+app.get("/api/leaderboard/volume/:timestamp", async (req, res) => {
+	const response = await fetch(`https://indexer.havendao.community/api/house.woothugg.near?api_key=6ad95b1bc0c3c4f2901c73d2&limit=999999`);
+
+
+	const results = await response.json();
+
+	let transactions = results.data.filter((value) => value.signer_id != 'house.woothugg.near');
+	transactions =transactions.filter((value) => value.timestamp >= req.params.timestamp);
 
 	console.log(transactions)
 
@@ -207,6 +303,104 @@ app.get("/api/leaderboard/streak", async (req, res) => {
 	let leaderboard = player_info.map((value) => {return {'signer_id': value.signer_id, 'streak': value.streak}});
 	leaderboard.sort(function(a, b) {
 		return b.streak - a.streak;
+	});
+
+	return res.json({
+		'total_flips': transactions.length,
+		'total_won': total_won,
+		'total_loss': total_loss,
+		'total_volume': total_volume,
+		'leaderboard': leaderboard.slice(0, 20)
+	})
+})
+
+app.get("/api/leaderboard/win-streak/:timestamp", async (req, res) => {
+	const response = await fetch(`https://indexer.havendao.community/api/house.woothugg.near?api_key=6ad95b1bc0c3c4f2901c73d2&limit=999999`);
+
+
+	const results = await response.json();
+
+	let transactions = results.data.filter((value) => value.signer_id != 'house.woothugg.near');
+	transactions =transactions.filter((value) => value.timestamp >= req.params.timestamp);
+
+	console.log(transactions)
+
+	let total_volume = 0;
+	let total_won = 0;
+	let total_loss = 0;
+	for(let i = 0; i < transactions.length; i++)
+	{
+		let amount = parseInt(transactions[i].amount)
+		if(amount > 6) {
+			amount /= 1035000000000000000000000
+		}
+
+		total_volume += amount;
+		if(transactions[i].outcome)
+		{
+			total_won += amount;
+		}
+		else
+		{
+			total_loss += amount;
+		}
+	}
+
+	let unique_players = [...new Set(transactions.map((value) => value.signer_id))];
+	let player_info = unique_players.map((value) => get_player_info(transactions, value));
+
+	let leaderboard = player_info.map((value) => {return {'signer_id': value.signer_id, 'streak': value.streak}});
+	leaderboard.sort(function(a, b) {
+		return b.streak - a.streak;
+	});
+
+	return res.json({
+		'total_flips': transactions.length,
+		'total_won': total_won,
+		'total_loss': total_loss,
+		'total_volume': total_volume,
+		'leaderboard': leaderboard.slice(0, 20)
+	})
+})
+
+app.get("/api/leaderboard/loss-streak/:timestamp", async (req, res) => {
+	const response = await fetch(`https://indexer.havendao.community/api/house.woothugg.near?api_key=6ad95b1bc0c3c4f2901c73d2&limit=999999`);
+
+
+	const results = await response.json();
+
+	let transactions = results.data.filter((value) => value.signer_id != 'house.woothugg.near');
+	transactions =transactions.filter((value) => value.timestamp >= req.params.timestamp);
+
+	console.log(transactions)
+
+	let total_volume = 0;
+	let total_won = 0;
+	let total_loss = 0;
+	for(let i = 0; i < transactions.length; i++)
+	{
+		let amount = parseInt(transactions[i].amount)
+		if(amount > 6) {
+			amount /= 1035000000000000000000000
+		}
+
+		total_volume += amount;
+		if(transactions[i].outcome)
+		{
+			total_won += amount;
+		}
+		else
+		{
+			total_loss += amount;
+		}
+	}
+
+	let unique_players = [...new Set(transactions.map((value) => value.signer_id))];
+	let player_info = unique_players.map((value) => get_player_info(transactions, value));
+
+	let leaderboard = player_info.map((value) => {return {'signer_id': value.signer_id, 'streak': value.streak}});
+	leaderboard.sort(function(a, b) {
+		return a.streak - b.streak;
 	});
 
 	return res.json({
