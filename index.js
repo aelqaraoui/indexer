@@ -43,35 +43,57 @@ app.get("/api/all_transactions", async (req, res) => {
 const get_player_info = (transactions, address) => {
 	let result = 0
 	let volume = 0
-	let streak = 0
-	let do_streaks = true
+	let win_streak = 0
+	let loss_streak = 0
+	let do_win_streaks = true
+	let do_loss_streaks = true
 	for(let i = 0; i < transactions.length; i++)
 	{
 		
 		if(transactions[i].signer_id == address)
 		{
+			
+
 			let amount = parseInt(transactions[i].amount)
 			if(amount > 6) {
 				amount /= 1035000000000000000000000
 			}
 			//console.log(transactions[i].outcome, amount)
-			result += transactions[i].outcome ? 1 : -1 * amount
+
+			result -= amount
+			if(transactions[i].outcome)
+			{
+				result += 2 * amount
+			}
 			volume += amount
 
-			if(do_streaks)
+			if(do_win_streaks)
 			{
 				if(transactions[i].outcome)
 				{
-					streak += 1
+					win_streak += 1
 				}
-				else{
-					do_streaks = false
+				else
+				{
+					do_win_streaks = false
+				}
+			}
+
+			if(do_loss_streaks)
+			{
+				if(transactions[i].outcome)
+				{
+					loss_streak += 1
+				}
+				else
+				{
+					do_loss_streaks = false
 				}
 			}
 		}
 		
 	}
-	return {'signer_id': address, 'net': result, 'volume': volume, 'streak': streak}
+	return {'signer_id': address, 'net': result, 'volume': volume, 'win_streak': win_streak, 'loss_streak': loss_streak}
 }
 
 app.get("/api/leaderboard/net-gain", async (req, res) => {
@@ -300,7 +322,7 @@ app.get("/api/leaderboard/streak", async (req, res) => {
 	let unique_players = [...new Set(transactions.map((value) => value.signer_id))];
 	let player_info = unique_players.map((value) => get_player_info(transactions, value));
 
-	let leaderboard = player_info.map((value) => {return {'signer_id': value.signer_id, 'streak': value.streak}});
+	let leaderboard = player_info.map((value) => {return {'signer_id': value.signer_id, 'streak': value.win_streak}});
 	leaderboard.sort(function(a, b) {
 		return b.streak - a.streak;
 	});
@@ -398,9 +420,9 @@ app.get("/api/leaderboard/loss-streak/:timestamp", async (req, res) => {
 	let unique_players = [...new Set(transactions.map((value) => value.signer_id))];
 	let player_info = unique_players.map((value) => get_player_info(transactions, value));
 
-	let leaderboard = player_info.map((value) => {return {'signer_id': value.signer_id, 'streak': value.streak}});
+	let leaderboard = player_info.map((value) => {return {'signer_id': value.signer_id, 'streak': value.loss_streak}});
 	leaderboard.sort(function(a, b) {
-		return a.streak - b.streak;
+		return b.streak - a.streak;
 	});
 
 	return res.json({
